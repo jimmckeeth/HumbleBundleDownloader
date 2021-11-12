@@ -1,4 +1,7 @@
-// https://github.com/salvadordf/CEF4Delphi.git
+// Setup TEdgeBrowser correctly
+//
+// https://blogs.embarcadero.com/execute-scripts-and-view-source-with-tedgebrowser/
+// https://docwiki.embarcadero.com/RADStudio/en/Using_TEdgeBrowser_Component_and_Changes_to_the_TWebBrowser_Component
 
 unit HumbleBundleDLUnit1;
 
@@ -64,6 +67,10 @@ type
     procedure Button4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure EdgeBrowser1ExecuteScript(Sender: TCustomEdgeBrowser;
+      AResult: HRESULT; const AResultObjectAsJson: string);
+    procedure EdgeBrowser1NavigationCompleted(Sender: TCustomEdgeBrowser;
+      IsSuccess: Boolean; WebErrorStatus: TOleEnum);
   private
     { Private declarations }
     FAutomatic: Boolean;
@@ -99,7 +106,7 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  //Chromium1.LoadURL(CGetKeys);
+  EdgeBrowser1.Navigate(CGetKeys);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -232,42 +239,55 @@ end;
 function StripHTML(AHTML: String): String;
 begin
   Result := AHTML
+    .Replace('<html><head></head><body><pre style=word-wrap: break-word; white-space: pre-wrap;>','')
     .Replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">','')
     .Replace('</pre></body></html>','');
 end;
 
-(*
-procedure TForm1.Chromium1TextResultAvailable(Sender: TObject;
-  const aText: ustring);
-var
-  key, json: string;
+
+procedure TForm1.DBGrid1DblClick(Sender: TObject);
 begin
-  json := StripHTML(AText);
-  if Chromium1.DocumentURL = CGetKeys then
+  EdgeBrowser1.Navigate(tblDownloadsURL.Value);
+end;
+
+procedure TForm1.EdgeBrowser1ExecuteScript(Sender: TCustomEdgeBrowser;
+  AResult: HRESULT; const AResultObjectAsJson: string);
+begin
+  if AResultObjectAsJson='null' then exit;
+  var json := StripHTML(TNetEncoding.URL.Decode(AResultObjectAsJson));
+  if json.StartsWith('"') and json.EndsWith('"') then
+    json := json.Remove(0,1);
+    json := json.Remove(pred(json.Length),1);
+  if EdgeBrowser1.LocationURL = CGetKeys then
   begin
-    json := json
+    json := json.DeQuotedString('"')
       .Replace('['#$A'{'#$A'"gamekey":"','')
+      .Replace('['#$A'{'#$A'gamekey:','')
       .Replace('"'#$A'},'#$A'{'#$A'"gamekey":"',sLineBreak)
-      .Replace('"'#$A'}'#$A']','');
+      .Replace(''#$A'},'#$A'{'#$A'gamekey:',sLineBreak)
+      .Replace('"'#$A'}'#$A']','')
+      .Replace(''#$A'}'#$A']','');
     lbKeys.Items.Text := Json;
     lbKeys.Items.SaveToFile(TPath.Combine(FCachePath, 'keys.txt'));
   end
-  else if string(Chromium1.DocumentURL).StartsWith(CGetOrders) then
+  else if EdgeBrowser1.LocationURL.StartsWith(CGetOrders) then
   begin
     if FAutomatic then
     begin
+
       JsonToDataset(json);
-      key := string(Chromium1.DocumentURL).Substring(CGetOrders.Length);
+      var key := EdgeBrowser1.LocationURL.Substring(CGetOrders.Length);
       TFile.WriteAllText(tPath.combine(FCachePath, key + '.json'), json);
       NextOrder(key);
     end;
   end;
 end;
-*)
 
-procedure TForm1.DBGrid1DblClick(Sender: TObject);
+procedure TForm1.EdgeBrowser1NavigationCompleted(
+  Sender: TCustomEdgeBrowser; IsSuccess: Boolean;
+  WebErrorStatus: TOleEnum);
 begin
-//  Chromium1.LoadURL(tblDownloadsURL.Value);
+  EdgeBrowser1.ExecuteScript('encodeURI(document.documentElement.outerHTML)');
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -288,7 +308,7 @@ end;
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
-  EdgeBrowser1.Navigate('https://humblebundle.com/');
+  EdgeBrowser1.Navigate('https://www.humblebundle.com/home/purchases');
   FAutomatic := False;
   if TFile.Exists(fTableFile) then
     tblDownloads.LoadFromFile(fTableFile);
@@ -303,14 +323,14 @@ begin
   f := TPath.Combine(FCachePath, AOrderKey + '.json');
   if not TFile.Exists(f) then
   begin
-    //Chromium1.LoadURL(CGetOrders + AOrderKey);
+    EdgeBrowser1.Navigate(CGetOrders + AOrderKey);
   end
   else
   begin
     json := TFile.ReadAllText(f);
+    JsonToDataset(json);
     if FAutomatic then
     begin
-      JsonToDataset(json);
       NextOrder(AOrderKey);
     end;
   end;

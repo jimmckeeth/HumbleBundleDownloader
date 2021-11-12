@@ -24,7 +24,7 @@ object Form1: TForm1
     Margins.Top = 6
     Margins.Right = 6
     Margins.Bottom = 6
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
@@ -110,10 +110,8 @@ object Form1: TForm1
         Margins.Bottom = 6
         Align = alClient
         TabOrder = 2
-        ExplicitLeft = 1664
-        ExplicitTop = 1264
-        ExplicitWidth = 200
-        ExplicitHeight = 80
+        OnExecuteScript = EdgeBrowser1ExecuteScript
+        OnNavigationCompleted = EdgeBrowser1NavigationCompleted
       end
     end
     object TabSheet2: TTabSheet
@@ -305,7 +303,7 @@ object Form1: TForm1
   end
   object DataSource1: TDataSource
     DataSet = tblDownloads
-    Left = 264
-    Top = 176
+    Left = 272
+    Top = 336
   end
 end

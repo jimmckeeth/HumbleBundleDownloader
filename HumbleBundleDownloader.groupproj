@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{A78B3273-16B5-4D66-B795-FCBA4FE950E3}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="src\HumbleBundleDL.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="HumbleBundleDL">
+        <MSBuild Projects="src\HumbleBundleDL.dproj"/>
+    </Target>
+    <Target Name="HumbleBundleDL:Clean">
+        <MSBuild Projects="src\HumbleBundleDL.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="HumbleBundleDL:Make">
+        <MSBuild Projects="src\HumbleBundleDL.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="HumbleBundleDL"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="HumbleBundleDL:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="HumbleBundleDL:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
