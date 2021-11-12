@@ -8,8 +8,6 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, System.IOUtils,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.OleCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Grids, Vcl.DBGrids,
 
-  uCEFWindowParent, uCEFChromiumWindow, uCEFChromium, uCEFTask, uCEFInterfaces, uCEFWinControl, uCEFTypes,
-
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error,
   FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.Bind.Components, Data.Bind.ObjectScope,
@@ -18,14 +16,13 @@ uses
   HumbleBundleJSONObjects,
 
   REST.Client, FireDAC.Stan.StorageBin, System.Net.URLClient,
-  System.Net.HttpClient, System.Net.HttpClientComponent;
+  System.Net.HttpClient, System.Net.HttpClientComponent, Winapi.WebView2,
+  Winapi.ActiveX, Vcl.Edge;
 
 type
   TForm1 = class(TForm)
     Button1: TButton;
     Button2: TButton;
-    Chromium1: TChromium;
-    CEFWindowParent1: TCEFWindowParent;
     Panel1: TPanel;
     lbKeys: TListBox;
     tblDownloads: TFDMemTable;
@@ -55,13 +52,10 @@ type
     Memo1: TMemo;
     Label1: TLabel;
     Button5: TButton;
+    EdgeBrowser1: TEdgeBrowser;
     procedure Button1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure Chromium1LoadEnd(Sender: TObject; const browser: ICefBrowser;
-      const frame: ICefFrame; httpStatusCode: Integer);
     procedure lbKeysClick(Sender: TObject);
-    procedure Chromium1TextResultAvailable(Sender: TObject;
-      const aText: ustring);
     procedure Button2Click(Sender: TObject);
     procedure btnFilterClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -105,7 +99,7 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  Chromium1.LoadURL(CGetKeys);
+  //Chromium1.LoadURL(CGetKeys);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -235,12 +229,6 @@ begin
     FAutomatic := False;
 end;
 
-procedure TForm1.Chromium1LoadEnd(Sender: TObject; const browser: ICefBrowser;
-  const frame: ICefFrame; httpStatusCode: Integer);
-begin
-  Chromium1.RetrieveHTML('');
-end;
-
 function StripHTML(AHTML: String): String;
 begin
   Result := AHTML
@@ -248,6 +236,7 @@ begin
     .Replace('</pre></body></html>','');
 end;
 
+(*
 procedure TForm1.Chromium1TextResultAvailable(Sender: TObject;
   const aText: ustring);
 var
@@ -274,10 +263,11 @@ begin
     end;
   end;
 end;
+*)
 
 procedure TForm1.DBGrid1DblClick(Sender: TObject);
 begin
-  Chromium1.LoadURL(tblDownloadsURL.Value);
+//  Chromium1.LoadURL(tblDownloadsURL.Value);
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -289,6 +279,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  EdgeBrowser1.Navigate('about:blank');
   FCachePath := TPath.Combine( TPath.GetTempPath, 'HumbleBundleDL');
   if not TDirectory.Exists(FCachePath) then
     TDirectory.CreateDirectory(FCachePath);
@@ -297,11 +288,7 @@ end;
 
 procedure TForm1.FormShow(Sender: TObject);
 begin
-  // You *MUST* call CreateBrowser to create and initialize the browser.
-  // This will trigger the AfterCreated event when the browser is fully
-  // initialized and ready to receive commands.
-  Chromium1.CreateBrowser(CEFWindowParent1);
-  Chromium1.LoadURL('about:blank');
+  EdgeBrowser1.Navigate('https://humblebundle.com/');
   FAutomatic := False;
   if TFile.Exists(fTableFile) then
     tblDownloads.LoadFromFile(fTableFile);
@@ -316,7 +303,7 @@ begin
   f := TPath.Combine(FCachePath, AOrderKey + '.json');
   if not TFile.Exists(f) then
   begin
-    Chromium1.LoadURL(CGetOrders + AOrderKey);
+    //Chromium1.LoadURL(CGetOrders + AOrderKey);
   end
   else
   begin

@@ -2,99 +2,142 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 661
-  ClientWidth = 842
+  ClientHeight = 1322
+  ClientWidth = 1684
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -11
+  Font.Height = -22
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 13
+  PixelsPerInch = 192
+  TextHeight = 27
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 842
-    Height = 661
-    ActivePage = TabSheet2
+    Width = 1684
+    Height = 1322
+    Margins.Left = 6
+    Margins.Top = 6
+    Margins.Right = 6
+    Margins.Bottom = 6
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Caption = 'GetKeys'
       object lbKeys: TListBox
         Left = 0
-        Top = 73
-        Width = 193
-        Height = 560
+        Top = 146
+        Width = 386
+        Height = 1121
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alLeft
-        ItemHeight = 13
+        ItemHeight = 27
         TabOrder = 0
         OnClick = lbKeysClick
-      end
-      object CEFWindowParent1: TCEFWindowParent
-        Left = 193
-        Top = 73
-        Width = 641
-        Height = 560
-        Align = alClient
-        TabOrder = 1
       end
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 834
-        Height = 73
+        Width = 1668
+        Height = 146
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alTop
         Caption = ' '
-        TabOrder = 2
+        TabOrder = 1
         object Button1: TButton
-          Left = 16
-          Top = 16
-          Width = 75
-          Height = 43
+          Left = 32
+          Top = 32
+          Width = 150
+          Height = 86
+          Margins.Left = 6
+          Margins.Top = 6
+          Margins.Right = 6
+          Margins.Bottom = 6
           Caption = 'Get Keys'
           TabOrder = 0
           OnClick = Button1Click
         end
         object Button2: TButton
-          Left = 97
-          Top = 16
-          Width = 75
-          Height = 43
+          Left = 194
+          Top = 32
+          Width = 150
+          Height = 86
+          Margins.Left = 6
+          Margins.Top = 6
+          Margins.Right = 6
+          Margins.Bottom = 6
           Caption = 'Get URLs'
           TabOrder = 1
           OnClick = Button2Click
         end
         object Button4: TButton
-          Left = 178
-          Top = 16
-          Width = 75
-          Height = 41
+          Left = 356
+          Top = 32
+          Width = 150
+          Height = 82
+          Margins.Left = 6
+          Margins.Top = 6
+          Margins.Right = 6
+          Margins.Bottom = 6
           Caption = 'Clear'
           TabOrder = 2
           OnClick = Button4Click
         end
       end
+      object EdgeBrowser1: TEdgeBrowser
+        Left = 386
+        Top = 146
+        Width = 1282
+        Height = 1121
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
+        Align = alClient
+        TabOrder = 2
+        ExplicitLeft = 1664
+        ExplicitTop = 1264
+        ExplicitWidth = 200
+        ExplicitHeight = 80
+      end
     end
     object TabSheet2: TTabSheet
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Caption = 'TabSheet2'
       ImageIndex = 1
       object DBGrid1: TDBGrid
         Left = 0
-        Top = 41
-        Width = 834
-        Height = 592
+        Top = 82
+        Width = 1668
+        Height = 1185
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alClient
         DataSource = DataSource1
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
-        TitleFont.Height = -11
+        TitleFont.Height = -22
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
         OnDblClick = DBGrid1DblClick
@@ -102,8 +145,12 @@ object Form1: TForm1
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 834
-        Height = 41
+        Width = 1668
+        Height = 82
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Align = alTop
         BevelOuter = bvNone
         Caption = ' '
@@ -111,26 +158,38 @@ object Form1: TForm1
         object btnFilter: TButton
           Left = 0
           Top = 0
-          Width = 51
-          Height = 41
+          Width = 102
+          Height = 82
+          Margins.Left = 6
+          Margins.Top = 6
+          Margins.Right = 6
+          Margins.Bottom = 6
           Align = alLeft
           Caption = 'Filter'
           TabOrder = 0
           OnClick = btnFilterClick
         end
         object editFilter: TEdit
-          Left = 57
-          Top = 10
-          Width = 409
-          Height = 21
+          Left = 114
+          Top = 20
+          Width = 818
+          Height = 35
+          Margins.Left = 6
+          Margins.Top = 6
+          Margins.Right = 6
+          Margins.Bottom = 6
           TabOrder = 1
           Text = 'format like '#39'%PDF%'#39
         end
         object Button3: TButton
-          Left = 480
-          Top = 8
-          Width = 75
-          Height = 25
+          Left = 960
+          Top = 16
+          Width = 150
+          Height = 50
+          Margins.Left = 6
+          Margins.Top = 6
+          Margins.Right = 6
+          Margins.Bottom = 6
           Caption = 'Download'
           TabOrder = 2
           OnClick = Button3Click
@@ -138,20 +197,32 @@ object Form1: TForm1
       end
     end
     object TabSheet3: TTabSheet
+      Margins.Left = 6
+      Margins.Top = 6
+      Margins.Right = 6
+      Margins.Bottom = 6
       Caption = 'TabSheet3'
       ImageIndex = 2
       object Label1: TLabel
-        Left = 104
-        Top = 5
-        Width = 31
-        Height = 13
+        Left = 208
+        Top = 10
+        Width = 64
+        Height = 27
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Caption = 'Label1'
       end
       object Memo1: TMemo
-        Left = 3
-        Top = 31
-        Width = 505
-        Height = 513
+        Left = 6
+        Top = 62
+        Width = 1010
+        Height = 1026
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Lines.Strings = (
           'Memo1')
         ScrollBars = ssBoth
@@ -161,19 +232,17 @@ object Form1: TForm1
       object Button5: TButton
         Left = 0
         Top = 0
-        Width = 75
-        Height = 25
+        Width = 150
+        Height = 50
+        Margins.Left = 6
+        Margins.Top = 6
+        Margins.Right = 6
+        Margins.Bottom = 6
         Caption = 'Total'
         TabOrder = 1
         OnClick = Button5Click
       end
     end
-  end
-  object Chromium1: TChromium
-    OnTextResultAvailable = Chromium1TextResultAvailable
-    OnLoadEnd = Chromium1LoadEnd
-    Left = 264
-    Top = 128
   end
   object tblDownloads: TFDMemTable
     FieldDefs = <>
