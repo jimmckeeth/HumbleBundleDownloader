@@ -16,16 +16,14 @@ uses
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.Bind.Components, Data.Bind.ObjectScope,
   Generics.Collections, System.Generics.Defaults, System.Threading,
 
-  HumbleBundleJSONObjects,
-
-  REST.Client, FireDAC.Stan.StorageBin, System.Net.URLClient,
+  FireDAC.Stan.StorageBin, System.Net.URLClient,
   System.Net.HttpClient, System.Net.HttpClientComponent, Winapi.WebView2,
-  Winapi.ActiveX, Vcl.Edge;
+  Winapi.ActiveX, Vcl.Edge, BundleJsonObject;
 
 type
   TForm1 = class(TForm)
-    Button1: TButton;
-    Button2: TButton;
+    btnGetKeys: TButton;
+    btnGetUrls: TButton;
     Panel1: TPanel;
     lbKeys: TListBox;
     tblDownloads: TFDMemTable;
@@ -49,31 +47,31 @@ type
     tblDownloadsIcon: TWideStringField;
     tblDownloadsPaid: TCurrencyField;
     tblDownloadsBundleKey: TWideStringField;
-    Button3: TButton;
-    Button4: TButton;
+    btnDownload: TButton;
+    btnClear: TButton;
     TabSheet3: TTabSheet;
     Memo1: TMemo;
     Label1: TLabel;
-    Button5: TButton;
+    btnGetTotal: TButton;
     EdgeBrowser1: TEdgeBrowser;
-    procedure Button1Click(Sender: TObject);
+    ckAuto: TCheckBox;
+    procedure btnGetKeysClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure lbKeysClick(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
+    procedure btnGetUrlsClick(Sender: TObject);
     procedure btnFilterClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure DBGrid1DblClick(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
+    procedure btnDownloadClick(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
+    procedure btnGetTotalClick(Sender: TObject);
     procedure EdgeBrowser1ExecuteScript(Sender: TCustomEdgeBrowser;
       AResult: HRESULT; const AResultObjectAsJson: string);
     procedure EdgeBrowser1NavigationCompleted(Sender: TCustomEdgeBrowser;
       IsSuccess: Boolean; WebErrorStatus: TOleEnum);
   private
     { Private declarations }
-    FAutomatic: Boolean;
     FCachePath: String;
     FTableFile: string;
     function CreateDownloadTask(AUrl, ALocalFile, AFormat, AExt: string): ITask;
@@ -93,7 +91,7 @@ var
 implementation
 
 uses
-  System.JSON, System.Hash, System.NetEncoding;
+  System.JSON, System.Hash, System.NetEncoding,  System.RegularExpressions;
 
 {$R *.dfm}
 
@@ -104,15 +102,15 @@ begin
   tblDownloads.Filtered := True;
 end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.btnGetKeysClick(Sender: TObject);
 begin
   EdgeBrowser1.Navigate(CGetKeys);
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
+procedure TForm1.btnGetUrlsClick(Sender: TObject);
 begin
   while not tblDownloads.Eof do tblDownloads.Delete;
-  FAutomatic := True;
+  ckAuto.Checked := True;
   lbKeys.ItemIndex := 0;
   GetOrder(lbKeys.Items[lbKeys.ItemIndex]);
 end;
@@ -151,7 +149,7 @@ begin
     end);
 end;
 
-procedure TForm1.Button3Click(Sender: TObject);
+procedure TForm1.btnDownloadClick(Sender: TObject);
 var
   tasks: TList<ITask>;
   task: ITask;
@@ -185,7 +183,7 @@ begin
 
 end;
 
-procedure TForm1.Button4Click(Sender: TObject);
+procedure TForm1.btnClearClick(Sender: TObject);
 begin
   TDirectory.Delete(FCachePath, True);
   TDirectory.CreateDirectory(FCachePath);
@@ -193,9 +191,9 @@ begin
 
 end;
 
-procedure TForm1.Button5Click(Sender: TObject);
+procedure TForm1.btnGetTotalClick(Sender: TObject);
  var
-  order: THumbleOrderClass;
+  order: TBundle;
   key, json, f: string;
   I: Integer;
   total: Currency;
@@ -208,7 +206,9 @@ begin
     f := TPath.Combine(FCachePath, key + '.json');
     if not TFile.Exists(f) then raise Exception.Create('File not found '+ f);
     json := TFile.ReadAllText(f);
-    order := THumbleOrderClass.FromJsonString(json);
+
+    TJSONMapper<TBundle>.SetDefaultLibrary('REST.Json');
+    order := TJSONMapper<TBundle>.Default.FromObject(json);
     try
       total := total + order.amount_spent;
       memo1.Lines.Add(format('"%s"'#10'%s'#10'%f',
@@ -233,51 +233,67 @@ begin
     GetOrder(lbKeys.Items[lbKeys.ItemIndex]);
   end
   else
-    FAutomatic := False;
+    ckAuto.Checked := False;
 end;
 
-function StripHTML(AHTML: String): String;
+function StripHTML(const AHTML: string): string;
+var
+  JSONEndPos: Integer;
 begin
-  Result := AHTML
-    .Replace('<html><head></head><body><pre style=word-wrap: break-word; white-space: pre-wrap;>','')
-    .Replace('<html><head></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">','')
-    .Replace('</pre></body></html>','');
-end;
+  // Define regex pattern to remove HTML tags
+  Result := TRegEx.Replace(AHTML, '<[^>]+>', '', [roMultiLine]);
 
+  // Find the position of "}Code folding" and truncate the string if found
+  JSONEndPos := Pos('}Code folding', Result);
+  if JSONEndPos > 0 then
+    Result := Copy(Result, 1, JSONEndPos);
+end;
 
 procedure TForm1.DBGrid1DblClick(Sender: TObject);
 begin
   EdgeBrowser1.Navigate(tblDownloadsURL.Value);
 end;
 
+procedure ExtractGameKeys(const Input: string; const GameKeys: TStrings);
+begin
+  Assert(Assigned(GameKeys));
+  // Define regex pattern to find gamekey values
+  var Regex := TRegEx.Create('"gamekey":"(.*?)"');
+
+  // Find all matches
+  var Matches := Regex.Matches(Input);
+
+  // Iterate through the matches and extract gamekey values
+  for var Match in Matches do
+  begin
+    GameKeys.Add(Match.Groups[1].Value);
+  end;
+end;
+
 procedure TForm1.EdgeBrowser1ExecuteScript(Sender: TCustomEdgeBrowser;
   AResult: HRESULT; const AResultObjectAsJson: string);
 begin
   if AResultObjectAsJson='null' then exit;
-  var json := StripHTML(TNetEncoding.URL.Decode(AResultObjectAsJson));
-  if json.StartsWith('"') and json.EndsWith('"') then
-    json := json.Remove(0,1);
-    json := json.Remove(pred(json.Length),1);
+  var content := TNetEncoding.URL.Decode(AResultObjectAsJson);
+  if content.StartsWith('"') and content.EndsWith('"') then
+  begin
+    content := content.Remove(0,1);
+    content := content.Remove(pred(content.Length),1);
+  end;
   if EdgeBrowser1.LocationURL = CGetKeys then
   begin
-    json := json.DeQuotedString('"')
-      .Replace('['#$A'{'#$A'"gamekey":"','')
-      .Replace('['#$A'{'#$A'gamekey:','')
-      .Replace('"'#$A'},'#$A'{'#$A'"gamekey":"',sLineBreak)
-      .Replace(''#$A'},'#$A'{'#$A'gamekey:',sLineBreak)
-      .Replace('"'#$A'}'#$A']','')
-      .Replace(''#$A'}'#$A']','');
-    lbKeys.Items.Text := Json;
+    lbKeys.Clear;
+    ExtractGameKeys(StripHTML(content), lbKeys.Items);
     lbKeys.Items.SaveToFile(TPath.Combine(FCachePath, 'keys.txt'));
   end
   else if EdgeBrowser1.LocationURL.StartsWith(CGetOrders) then
   begin
-    if FAutomatic then
+    var json := StripHTML(content);
+    if ckAuto.Checked then
     begin
-
-      JsonToDataset(json);
       var key := EdgeBrowser1.LocationURL.Substring(CGetOrders.Length);
       TFile.WriteAllText(tPath.combine(FCachePath, key + '.json'), json);
+      JsonToDataset(json);
       NextOrder(key);
     end;
   end;
@@ -299,6 +315,9 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  if not FileExists('WebView2Loader.dll') then
+    raise Exception.Create('WebView2Loader.dll must be deployed with the program.');
+
   EdgeBrowser1.Navigate('about:blank');
   FCachePath := TPath.Combine( TPath.GetTempPath, 'HumbleBundleDL');
   if not TDirectory.Exists(FCachePath) then
@@ -309,7 +328,7 @@ end;
 procedure TForm1.FormShow(Sender: TObject);
 begin
   EdgeBrowser1.Navigate('https://www.humblebundle.com/home/purchases');
-  FAutomatic := False;
+  ckAuto.Checked := False;
   if TFile.Exists(fTableFile) then
     tblDownloads.LoadFromFile(fTableFile);
   if TFile.Exists(TPath.Combine(FCachePath, 'keys.txt')) then
@@ -329,7 +348,7 @@ begin
   begin
     json := TFile.ReadAllText(f);
     JsonToDataset(json);
-    if FAutomatic then
+    if ckAuto.Checked then
     begin
       NextOrder(AOrderKey);
     end;
@@ -339,12 +358,13 @@ end;
 procedure TForm1.JsonToDataset(json: string);
 var
   url: string;
-  order: THumbleOrderClass;
+  order: TBundle;
   product: Integer;
   download: Integer;
   files: Integer;
 begin
-  order := THumbleOrderClass.FromJsonString(json);
+  TJSONMapper<TBundle>.SetDefaultLibrary('REST.Json');
+  order := TJSONMapper<TBundle>.Default.FromObject(json);
   try
     tblDownloads.Open;
     for product := Low(order.subproducts) to High(order.subproducts) do
@@ -381,7 +401,7 @@ end;
 
 procedure TForm1.lbKeysClick(Sender: TObject);
 begin
-  FAutomatic := False;
+  ckAuto.Checked := False;
   GetOrder(lbKeys.Items[lbKeys.ItemIndex])
 end;
 

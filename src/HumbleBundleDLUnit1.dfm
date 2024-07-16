@@ -1,141 +1,115 @@
 object Form1: TForm1
   Left = 0
   Top = 0
+  Margins.Left = 2
+  Margins.Top = 2
+  Margins.Right = 2
+  Margins.Bottom = 2
   Caption = 'Form1'
-  ClientHeight = 1322
-  ClientWidth = 1684
+  ClientHeight = 591
+  ClientWidth = 842
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -22
+  Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 192
-  TextHeight = 27
+  TextHeight = 13
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 1684
-    Height = 1322
-    Margins.Left = 6
-    Margins.Top = 6
-    Margins.Right = 6
-    Margins.Bottom = 6
-    ActivePage = TabSheet2
+    Width = 842
+    Height = 591
+    ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
     object TabSheet1: TTabSheet
-      Margins.Left = 6
-      Margins.Top = 6
-      Margins.Right = 6
-      Margins.Bottom = 6
       Caption = 'GetKeys'
       object lbKeys: TListBox
         Left = 0
-        Top = 146
-        Width = 386
-        Height = 1121
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Top = 73
+        Width = 193
+        Height = 490
         Align = alLeft
-        ItemHeight = 27
+        ItemHeight = 13
         TabOrder = 0
         OnClick = lbKeysClick
       end
       object Panel1: TPanel
         Left = 0
         Top = 0
-        Width = 1668
-        Height = 146
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Width = 834
+        Height = 73
         Align = alTop
         Caption = ' '
         TabOrder = 1
-        object Button1: TButton
-          Left = 32
-          Top = 32
-          Width = 150
-          Height = 86
-          Margins.Left = 6
-          Margins.Top = 6
-          Margins.Right = 6
-          Margins.Bottom = 6
+        object btnGetKeys: TButton
+          Left = 16
+          Top = 16
+          Width = 75
+          Height = 32
           Caption = 'Get Keys'
           TabOrder = 0
-          OnClick = Button1Click
+          OnClick = btnGetKeysClick
         end
-        object Button2: TButton
-          Left = 194
-          Top = 32
-          Width = 150
-          Height = 86
-          Margins.Left = 6
-          Margins.Top = 6
-          Margins.Right = 6
-          Margins.Bottom = 6
+        object btnGetUrls: TButton
+          Left = 97
+          Top = 16
+          Width = 75
+          Height = 32
           Caption = 'Get URLs'
           TabOrder = 1
-          OnClick = Button2Click
+          OnClick = btnGetUrlsClick
         end
-        object Button4: TButton
-          Left = 356
-          Top = 32
-          Width = 150
-          Height = 82
-          Margins.Left = 6
-          Margins.Top = 6
-          Margins.Right = 6
-          Margins.Bottom = 6
+        object btnClear: TButton
+          Left = 178
+          Top = 16
+          Width = 75
+          Height = 32
           Caption = 'Clear'
           TabOrder = 2
-          OnClick = Button4Click
+          OnClick = btnClearClick
+        end
+        object ckAuto: TCheckBox
+          Left = 97
+          Top = 50
+          Width = 75
+          Height = 17
+          Caption = 'Automatic'
+          TabOrder = 3
         end
       end
       object EdgeBrowser1: TEdgeBrowser
-        Left = 386
-        Top = 146
-        Width = 1282
-        Height = 1121
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Left = 193
+        Top = 73
+        Width = 641
+        Height = 490
         Align = alClient
         TabOrder = 2
+        AllowSingleSignOnUsingOSPrimaryAccount = False
+        TargetCompatibleBrowserVersion = '117.0.2045.28'
+        UserDataFolder = '%LOCALAPPDATA%\bds.exe.WebView2'
         OnExecuteScript = EdgeBrowser1ExecuteScript
         OnNavigationCompleted = EdgeBrowser1NavigationCompleted
       end
     end
     object TabSheet2: TTabSheet
-      Margins.Left = 6
-      Margins.Top = 6
-      Margins.Right = 6
-      Margins.Bottom = 6
-      Caption = 'TabSheet2'
+      Caption = 'Downloads'
       ImageIndex = 1
       object DBGrid1: TDBGrid
         Left = 0
-        Top = 82
-        Width = 1668
-        Height = 1185
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Top = 41
+        Width = 834
+        Height = 522
         Align = alClient
         DataSource = DataSource1
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
-        TitleFont.Height = -22
+        TitleFont.Height = -11
         TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
         OnDblClick = DBGrid1DblClick
@@ -143,12 +117,8 @@ object Form1: TForm1
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 1668
-        Height = 82
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Width = 834
+        Height = 41
         Align = alTop
         BevelOuter = bvNone
         Caption = ' '
@@ -156,89 +126,61 @@ object Form1: TForm1
         object btnFilter: TButton
           Left = 0
           Top = 0
-          Width = 102
-          Height = 82
-          Margins.Left = 6
-          Margins.Top = 6
-          Margins.Right = 6
-          Margins.Bottom = 6
+          Width = 51
+          Height = 41
           Align = alLeft
           Caption = 'Filter'
           TabOrder = 0
           OnClick = btnFilterClick
         end
         object editFilter: TEdit
-          Left = 114
-          Top = 20
-          Width = 818
-          Height = 35
-          Margins.Left = 6
-          Margins.Top = 6
-          Margins.Right = 6
-          Margins.Bottom = 6
+          Left = 57
+          Top = 10
+          Width = 409
+          Height = 21
           TabOrder = 1
           Text = 'format like '#39'%PDF%'#39
         end
-        object Button3: TButton
-          Left = 960
-          Top = 16
-          Width = 150
-          Height = 50
-          Margins.Left = 6
-          Margins.Top = 6
-          Margins.Right = 6
-          Margins.Bottom = 6
+        object btnDownload: TButton
+          Left = 480
+          Top = 8
+          Width = 75
+          Height = 25
           Caption = 'Download'
           TabOrder = 2
-          OnClick = Button3Click
+          OnClick = btnDownloadClick
         end
       end
     end
     object TabSheet3: TTabSheet
-      Margins.Left = 6
-      Margins.Top = 6
-      Margins.Right = 6
-      Margins.Bottom = 6
-      Caption = 'TabSheet3'
+      Caption = 'Totals'
       ImageIndex = 2
       object Label1: TLabel
-        Left = 208
-        Top = 10
-        Width = 64
-        Height = 27
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Left = 104
+        Top = 5
+        Width = 31
+        Height = 13
         Caption = 'Label1'
       end
       object Memo1: TMemo
-        Left = 6
-        Top = 62
-        Width = 1010
-        Height = 1026
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Left = 3
+        Top = 31
+        Width = 505
+        Height = 513
         Lines.Strings = (
           'Memo1')
         ScrollBars = ssBoth
         TabOrder = 0
         WordWrap = False
       end
-      object Button5: TButton
+      object btnGetTotal: TButton
         Left = 0
         Top = 0
-        Width = 150
-        Height = 50
-        Margins.Left = 6
-        Margins.Top = 6
-        Margins.Right = 6
-        Margins.Bottom = 6
+        Width = 75
+        Height = 25
         Caption = 'Total'
         TabOrder = 1
-        OnClick = Button5Click
+        OnClick = btnGetTotalClick
       end
     end
   end
