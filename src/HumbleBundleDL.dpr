@@ -6,7 +6,6 @@ uses
   Vcl.Forms,
   WinApi.Windows,
   HumbleBundleDLUnit1 in 'HumbleBundleDLUnit1.pas' {Form1},
-  HumbleBundleJSONObjects in 'HumbleBundleJSONObjects.pas',
   BundleJsonObject in 'BundleJsonObject.pas';
 
 {$R *.res}

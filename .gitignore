@@ -70,3 +70,5 @@ src/Win32/Debug/
 src/Win32/Release/
 src/Win64/Debug/
 src/Win64/Release/
+*.res
+*.delphilsp.json

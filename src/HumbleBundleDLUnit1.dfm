@@ -26,6 +26,8 @@ object Form1: TForm1
     ActivePage = TabSheet1
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 832
+    ExplicitHeight = 573
     object TabSheet1: TTabSheet
       Caption = 'GetKeys'
       object lbKeys: TListBox
@@ -37,6 +39,7 @@ object Form1: TForm1
         ItemHeight = 13
         TabOrder = 0
         OnClick = lbKeysClick
+        ExplicitHeight = 472
       end
       object Panel1: TPanel
         Left = 0
@@ -46,6 +49,7 @@ object Form1: TForm1
         Align = alTop
         Caption = ' '
         TabOrder = 1
+        ExplicitWidth = 824
         object btnGetKeys: TButton
           Left = 16
           Top = 16
@@ -89,11 +93,11 @@ object Form1: TForm1
         Height = 490
         Align = alClient
         TabOrder = 2
-        AllowSingleSignOnUsingOSPrimaryAccount = False
-        TargetCompatibleBrowserVersion = '117.0.2045.28'
         UserDataFolder = '%LOCALAPPDATA%\bds.exe.WebView2'
         OnExecuteScript = EdgeBrowser1ExecuteScript
         OnNavigationCompleted = EdgeBrowser1NavigationCompleted
+        ExplicitLeft = 249
+        ExplicitTop = 54
       end
     end
     object TabSheet2: TTabSheet
